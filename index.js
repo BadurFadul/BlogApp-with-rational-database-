@@ -3,7 +3,7 @@ const { Sequelize, Model, DataTypes, QueryTypes } = require('sequelize')
 const express = require('express')
 const app = express()
 
-//const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
@@ -14,7 +14,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
   });
 
- /* class Blog extends Model {}
+  class Blog extends Model {}
   Blog.init({
     id: {
         type: DataTypes.INTEGER,
@@ -22,14 +22,14 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
         autoIncrement: true
     },
     author: {
-        type: DataTypes.STRING
+        type: DataTypes.TEXT
     },
     url: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     },
     title: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull:false
     },
     likes: {
@@ -48,11 +48,42 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     res.json(blogs)
   })
 
+  app.get('/api/blogs/:id', async (req, res) => {
+    const blogs = await Blog.findByPk(req.params.id)
+    if(blogs) {
+      res.json(blogs)
+    } else {
+      res.status(400).end()
+    }
+    
+  })
+
+  app.use(express.json())
+
+  app.post('/api/blogs', async (req, res) => {
+    try{
+      const blog = await Blog.create(req.body)
+      return res.json(blog)
+    } catch (error) {
+      return res.status(400).json({error})
+    }
+  })
+
+
+  app.delete('/api/blogs/:id', async (req, res) => {
+    const blog = await Blog.findByPk(req.params.id)
+    if(blog) {
+      await blog.destroy()
+    }
+    res.status(400).end()
+
+  })
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-  })*/
+  })
 
-  const getblogs = async () => {
+  /*const getblogs = async () => {
     try {
         await sequelize.authenticate()
         try{
@@ -68,7 +99,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
         console.error('Unable to connect to the database:', error)
     }
   }
-  getblogs();
+  getblogs();*/
 
 
   
