@@ -15,7 +15,7 @@ router.get('/',  async (req, res) => {
     if(req.blog) {
       res.json(req.blog)
     } else {
-      res.status(400).end()
+      res.status(404).send({ error: 'provided id does not exits' })
     }
     
   })
@@ -25,10 +25,9 @@ router.get('/',  async (req, res) => {
       const blog = await Blog.create(req.body)
       return res.json(blog)
     } catch (error) {
-      return res.status(400).json({error})
+      return res.status(404).send({ error: 'body does not mach' })
     }
   })
-
 
   router.delete('/:id', blogfinder, async (req, res) => {
     if(req.blog) {
@@ -39,13 +38,12 @@ router.get('/',  async (req, res) => {
   })
 
   router.put('/:id', blogfinder, async (req, res) => {
-
     if(req.blog) {
       req.blog.likes = req.body.likes
       await req.blog.save()
       res.json(req.blog)
     }
-    res.status(404).end()
+    res.status(404).send({ error: 'error id doesnt exits' })
 
   })
 
