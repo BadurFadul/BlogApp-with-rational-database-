@@ -5,6 +5,9 @@ const app = express()
 const { PORT } = require('./util/config')
 const { connectToDatabase } = require('./util/db')
 const blogRouter = require('./routes/blog')
+const userRouter = require('./routes/user');
+const loginRouter = require('./routes/login')
+const { Sequelize } = require('sequelize');
 
 app.use(express.json())
 
@@ -17,14 +20,16 @@ const errorHandler = (error, req, res, next) => {
 
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
-    return res.status(400).json({ error: error.message })
+  } else if (error.name === 'SequelizeValidationError') {
+    return res.status(400).send({error: error.message})
   }
 
   next(error)
 }
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
+app.use('/api/login', loginRouter)
 
 //error handler
 app.use(unknownEndpoint)
