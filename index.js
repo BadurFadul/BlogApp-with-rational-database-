@@ -7,6 +7,7 @@ const { connectToDatabase } = require('./util/db')
 const blogRouter = require('./routes/blog')
 const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login')
+const authorRouter = require('./routes/authors')
 const { Sequelize } = require('sequelize');
 
 app.use(express.json())
@@ -30,6 +31,7 @@ const errorHandler = (error, req, res, next) => {
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/authors', authorRouter)
 
 //error handler
 app.use(unknownEndpoint)

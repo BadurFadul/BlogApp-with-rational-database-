@@ -1,4 +1,9 @@
+const jwt = require('jsonwebtoken')
 const router = require('express').Router()
+const { SECRET } = require('../util/config')
+const { Op } = require('sequelize')
+
+
 const {Blog} = require('../models')
 const {User} = require('../models')
 
@@ -9,13 +14,27 @@ const blogfinder = async (req, res, next) => {
 
 router.get('/',  async (req, res) => {
     const blogs = await Blog.findAll({
-      //attributes: { exclude: ['userId']},
+      attributes: { exclude: ['userId']},
       include: {
         model: User
-      }
+      },
+      where: {
+       [Op.or]: {
+        title: {
+          [Op.substring]: req.query.search ? req.query.search: ''
+        },
+        author: {
+          [Op.substring]: req.query.search ? req.query.search: ''
+        }
+       }
+      },
+      order: [
+        ['likes', 'DESC']
+      ]
     })
     res.json(blogs)
   })
+
 
   router.get('/:id', blogfinder, async (req, res) => {
     if(req.blog) {
@@ -28,17 +47,16 @@ router.get('/',  async (req, res) => {
 
   const tokenExtractor = (req, res, next) => {
     const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
-      console.log(SECRET)
-    } catch{
-      return res.status(401).json({ error: 'token invalid' })
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+      try {
+        req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+      } catch{
+        return res.status(401).json({ error: 'token invalid' })
+      }
+    }  else {
+      return res.status(401).json({ error: 'token missing' })
     }
-  }  else {
-    return res.status(401).json({ error: 'token missing' })
-  }
-  next()
+    next()
   }
 
   router.post('/',tokenExtractor, async (req, res) => {
@@ -47,7 +65,7 @@ router.get('/',  async (req, res) => {
       const blog = await Blog.create({...req.body, userId: user.id, date: new Date()})
       res.json(blog)
     } catch (error) {
-      return res.status(404).send({ error })
+      return res.status(400).send({ error })
     }
   })
 
