@@ -21,6 +21,7 @@ User.init({
         isEmail:true
       }
     },
+    
   }, {
     sequelize,
     underscored: true,

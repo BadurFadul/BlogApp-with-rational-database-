@@ -28,7 +28,7 @@ class Blog extends Model {}
   }, {
     sequelize,
     underscored:true,
-    timestamps: false,
+    timestamps: true,
     modelName: 'blog'
   })
   

@@ -8,7 +8,10 @@ const { sequelize } = require('../util/db')
 router.get('/', async (req, res) => {
     const author = await Blog.findAll({
        attributes: ['author',[sequelize.fn('COUNT', sequelize.col('author')), 'articles'],[sequelize.fn('SUM', sequelize.col('likes')), 'likes']],
-       group: ['author' ]
+       group: ['author' ],
+       order: [
+        ['likes', 'DESC']
+       ]
     })
     res.json(author)
 })
