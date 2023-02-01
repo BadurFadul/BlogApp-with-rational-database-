@@ -1,6 +1,4 @@
 const router = require('express').Router()
-const { SECRET } = require('../util/config')
-const { Op } = require('sequelize')
 
 const {Blog} = require('../models')
 const { sequelize } = require('../util/db')

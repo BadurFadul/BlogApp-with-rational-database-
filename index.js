@@ -8,6 +8,7 @@ const blogRouter = require('./routes/blog')
 const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login')
 const authorRouter = require('./routes/authors')
+const readlistRouter = require('./routes/readinglist')
 const { Sequelize } = require('sequelize');
 
 app.use(express.json())
@@ -32,6 +33,7 @@ app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/authors', authorRouter)
+app.use('/api/readinglists', readlistRouter)
 
 //error handler
 app.use(unknownEndpoint)

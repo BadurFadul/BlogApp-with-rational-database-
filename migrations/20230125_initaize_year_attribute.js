@@ -1,5 +1,4 @@
 const { DataTypes } = require('sequelize');
-const { down } = require('./20230124_initaize_blg_and_users');
 
 module.exports = {
     up: async ({ context: queryInterface }) => {
