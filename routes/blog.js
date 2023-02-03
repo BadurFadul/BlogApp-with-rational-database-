@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken')
 const router = require('express').Router()
-const { SECRET } = require('../util/config')
 const { Op } = require('sequelize')
+const { tokenExtractor } = require('../util/middleware')
+const { tokenValidator } = require('../util/middleware')
 
 
 const {Blog} = require('../models')
@@ -45,23 +45,19 @@ router.get('/',  async (req, res) => {
     
   })
 
-  const tokenExtractor = (req, res, next) => {
-    const authorization = req.get('authorization')
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-      try {
-        req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
-      } catch{
-        return res.status(401).json({ error: 'token invalid' })
-      }
-    }  else {
-      return res.status(401).json({ error: 'token missing' })
-    }
-    next()
-  }
 
-  router.post('/',tokenExtractor, async (req, res) => {
+  router.post('/',tokenExtractor,tokenValidator, async (req, res) => {
     try{
       const user = await User.findByPk(req.decodedToken.id)
+      if(!User || User.disabled == true) {
+        res.status(401).json({
+          errorMessage: 'Missing or Invalid Token'
+        })
+      }
+
+      if (User.disabled) {
+        return res.status(403).send({ error: "Session expired, please log in again."})
+      }
       const blog = await Blog.create({...req.body, userId: user.id, date: new Date()})
       res.json(blog)
     } catch (error) {

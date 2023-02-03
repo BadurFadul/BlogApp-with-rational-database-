@@ -3,6 +3,7 @@ const router = require('express').Router()
 
 const { SECRET } = require('../util/config')
 const User = require('../models/user')
+const Sessions = require('../models/sessions')
 
 router.post('/', async (request, response) => {
   const body = request.body
@@ -27,6 +28,8 @@ router.post('/', async (request, response) => {
   }
 
   const token = jwt.sign(userForToken, SECRET)
+  await Sessions.create({ token })
+
 
   response
     .status(200)

@@ -66,6 +66,7 @@ router.get('/', async (req, res) => {
     const user = await User.findOne({where: {username: req.params.username}})
     if(user) {
         user.username = req.body.username
+        user.disabled = req.body.disabled
       await user.save()
       res.json(user.username)
     }
